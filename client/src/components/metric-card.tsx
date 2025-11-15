@@ -26,13 +26,25 @@ export function MetricCard({ title, value, trend, trendLabel, icon }: MetricCard
   };
 
   return (
-    <Card data-testid={`card-metric-${title.toLowerCase().replace(/\s+/g, '-')}`}>
+    <Card
+      className="glass-card hover-elevate-gold animate-slide-up"
+      data-testid={`card-metric-${title.toLowerCase().replace(/\s+/g, '-')}`}
+    >
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        {icon && <div className="text-muted-foreground">{icon}</div>}
+        <CardTitle className="text-sm font-medium text-gold">{title}</CardTitle>
+        {icon && (
+          <div className="p-2 rounded-md bg-gradient-gold-subtle text-gold">
+            {icon}
+          </div>
+        )}
       </CardHeader>
       <CardContent>
-        <div className="text-3xl font-bold" data-testid={`text-metric-value-${title.toLowerCase().replace(/\s+/g, '-')}`}>{value}</div>
+        <div
+          className="text-3xl font-bold text-gold-shimmer"
+          data-testid={`text-metric-value-${title.toLowerCase().replace(/\s+/g, '-')}`}
+        >
+          {value}
+        </div>
         {trend !== undefined && (
           <div className="flex items-center gap-1 mt-2 text-xs">
             {getTrendIcon()}

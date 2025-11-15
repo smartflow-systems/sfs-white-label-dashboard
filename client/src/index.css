@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import SFS Family Theme */
+@import './styles/sfs-complete-theme.css';
+
 /* LIGHT MODE - SFS Design System */
 :root {
   /* Base Colors */
