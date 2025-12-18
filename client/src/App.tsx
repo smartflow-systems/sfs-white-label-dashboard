@@ -10,7 +10,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { TenantSelector } from "@/components/tenant-selector";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Bell, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import Dashboard from "@/pages/dashboard";
@@ -18,6 +18,9 @@ import Analytics from "@/pages/analytics";
 import Connections from "@/pages/connections";
 import Settings from "@/pages/settings";
 import NotFound from "@/pages/not-found";
+import { CircuitBackground } from "@/components/circuit-background";
+import { CommandPalette } from "@/components/command-palette";
+import { NotificationsCenter } from "@/components/notifications-center";
 
 function Router() {
   return (
@@ -48,15 +51,21 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="light">
+      <ThemeProvider defaultTheme="dark">
         <TooltipProvider>
+          {/* Golden Circuit Background */}
+          <CircuitBackground />
+
+          {/* Command Palette (⌘K) */}
+          <CommandPalette />
+
           <SidebarProvider style={style as React.CSSProperties}>
-            <div className="flex h-screen w-full">
+            <div className="flex h-screen w-full relative circuit-container">
               <AppSidebar tenantName={selectedTenant.name} />
               <div className="flex flex-col flex-1 min-w-0">
-                <header className="flex items-center justify-between gap-4 p-4 border-b h-16 shrink-0">
+                <header className="flex items-center justify-between gap-4 p-4 border-b border-border-gold h-16 shrink-0 glass-card sticky top-0 z-50">
                   <div className="flex items-center gap-4">
-                    <SidebarTrigger data-testid="button-sidebar-toggle" />
+                    <SidebarTrigger data-testid="button-sidebar-toggle" className="hover-elevate-gold" />
                     <TenantSelector
                       tenants={mockTenants}
                       selectedTenant={selectedTenant}
@@ -67,18 +76,16 @@ function App() {
                     <div className="relative hidden md:block">
                       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
-                        placeholder="Search..."
-                        className="pl-9 w-64"
+                        placeholder="Search... (press / to focus)"
+                        className="pl-9 w-64 glass-card hover-elevate-gold border-border-gold focus:border-primary"
                         data-testid="input-global-search"
                       />
                     </div>
-                    <Button variant="ghost" size="icon" data-testid="button-notifications">
-                      <Bell className="h-5 w-5" />
-                    </Button>
+                    <NotificationsCenter />
                     <ThemeToggle />
-                    <Avatar className="h-8 w-8" data-testid="avatar-user">
+                    <Avatar className="h-8 w-8 hover-elevate-gold cursor-pointer transition-all" data-testid="avatar-user">
                       <AvatarImage src="" />
-                      <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                      <AvatarFallback className="bg-gradient-gold text-black text-xs font-semibold">
                         JD
                       </AvatarFallback>
                     </Avatar>
