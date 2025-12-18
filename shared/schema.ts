@@ -190,6 +190,124 @@ export const subscriptionPlans = pgTable("subscription_plans", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// ==================== REFERRALS ====================
+export const referrals = pgTable("referrals", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+
+  // Referrer (the user who refers)
+  referrerId: varchar("referrer_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  referrerTenantId: varchar("referrer_tenant_id").notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+
+  // Referral Code
+  code: text("code").notNull().unique(), // e.g., "SFS-GOLDEN-2025"
+
+  // Referee (the user who was referred)
+  refereeId: varchar("referee_id").references(() => users.id, { onDelete: 'set null' }),
+  refereeTenantId: varchar("referee_tenant_id").references(() => tenants.id, { onDelete: 'set null' }),
+  refereeEmail: text("referee_email"), // Track even before signup
+
+  // Status
+  status: text("status").notNull().default("pending"), // pending, active, paid
+
+  // Commission
+  commissionRate: integer("commission_rate").notNull().default(30), // 30%
+  totalEarnings: integer("total_earnings").default(0), // in cents
+  paidEarnings: integer("paid_earnings").default(0), // in cents
+  pendingEarnings: integer("pending_earnings").default(0), // in cents
+
+  // Subscription tracking
+  refereeStripeSubscriptionId: text("referee_stripe_subscription_id"),
+
+  // Metadata
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  convertedAt: timestamp("converted_at"), // When referee subscribed
+  lastPaymentAt: timestamp("last_payment_at"),
+});
+
+// ==================== REFERRAL COMMISSIONS ====================
+export const referralCommissions = pgTable("referral_commissions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+
+  // Referral relationship
+  referralId: varchar("referral_id").notNull().references(() => referrals.id, { onDelete: 'cascade' }),
+  referrerId: varchar("referrer_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+
+  // Payment details
+  amount: integer("amount").notNull(), // in cents
+  invoiceId: text("invoice_id"), // Stripe invoice ID
+  stripeSubscriptionId: text("stripe_subscription_id"),
+
+  // Status
+  status: text("status").notNull().default("pending"), // pending, approved, paid
+  paidAt: timestamp("paid_at"),
+
+  // Metadata
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// ==================== USAGE TRACKING ====================
+export const usageRecords = pgTable("usage_records", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+
+  // Tenant scoped
+  tenantId: varchar("tenant_id").notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+
+  // Usage period
+  year: integer("year").notNull(),
+  month: integer("month").notNull(),
+  day: integer("day"),
+
+  // API Usage
+  apiCalls: integer("api_calls").default(0),
+  successfulCalls: integer("successful_calls").default(0),
+  failedCalls: integer("failed_calls").default(0),
+
+  // Storage Usage (in MB)
+  storageUsed: integer("storage_used").default(0),
+
+  // Bandwidth (in MB)
+  bandwidthUsed: integer("bandwidth_used").default(0),
+
+  // Metadata
+  recordedAt: timestamp("recorded_at").defaultNow().notNull(),
+});
+
+// ==================== INVOICES ====================
+export const invoices = pgTable("invoices", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+
+  // Tenant relationship
+  tenantId: varchar("tenant_id").notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+
+  // Stripe info
+  stripeInvoiceId: text("stripe_invoice_id").unique(),
+  stripeCustomerId: text("stripe_customer_id"),
+  stripeSubscriptionId: text("stripe_subscription_id"),
+
+  // Invoice details
+  number: text("number").notNull().unique(), // Invoice number
+  amount: integer("amount").notNull(), // in cents
+  tax: integer("tax").default(0), // in cents
+  total: integer("total").notNull(), // in cents
+  currency: text("currency").notNull().default("usd"),
+
+  // Status
+  status: text("status").notNull().default("draft"), // draft, open, paid, void, uncollectible
+  paidAt: timestamp("paid_at"),
+  dueDate: timestamp("due_date"),
+
+  // URLs
+  invoicePdfUrl: text("invoice_pdf_url"),
+  hostedInvoiceUrl: text("hosted_invoice_url"),
+
+  // Metadata
+  description: text("description"),
+  metadata: jsonb("metadata").$type<Record<string, any>>().default(sql`'{}'`),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 // ==================== ACTIVITY LOGS ====================
 export const activityLogs = pgTable("activity_logs", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
@@ -220,6 +338,10 @@ export const insertApiConnectionSchema = createInsertSchema(apiConnections).omit
 export const insertDashboardWidgetSchema = createInsertSchema(dashboardWidgets).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertSubscriptionPlanSchema = createInsertSchema(subscriptionPlans).omit({ id: true, createdAt: true });
 export const insertActivityLogSchema = createInsertSchema(activityLogs).omit({ id: true, createdAt: true });
+export const insertReferralSchema = createInsertSchema(referrals).omit({ id: true, createdAt: true });
+export const insertReferralCommissionSchema = createInsertSchema(referralCommissions).omit({ id: true, createdAt: true });
+export const insertUsageRecordSchema = createInsertSchema(usageRecords).omit({ id: true, recordedAt: true });
+export const insertInvoiceSchema = createInsertSchema(invoices).omit({ id: true, createdAt: true, updatedAt: true });
 
 // ==================== TYPES ====================
 export type User = typeof users.$inferSelect;
@@ -242,3 +364,15 @@ export type InsertSubscriptionPlan = z.infer<typeof insertSubscriptionPlanSchema
 
 export type ActivityLog = typeof activityLogs.$inferSelect;
 export type InsertActivityLog = z.infer<typeof insertActivityLogSchema>;
+
+export type Referral = typeof referrals.$inferSelect;
+export type InsertReferral = z.infer<typeof insertReferralSchema>;
+
+export type ReferralCommission = typeof referralCommissions.$inferSelect;
+export type InsertReferralCommission = z.infer<typeof insertReferralCommissionSchema>;
+
+export type UsageRecord = typeof usageRecords.$inferSelect;
+export type InsertUsageRecord = z.infer<typeof insertUsageRecordSchema>;
+
+export type Invoice = typeof invoices.$inferSelect;
+export type InsertInvoice = z.infer<typeof insertInvoiceSchema>;
