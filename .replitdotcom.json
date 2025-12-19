@@ -1,0 +1,80 @@
+{
+  "name": "SFS Family Dashboard",
+  "description": "Revenue-generating multi-tenant SaaS dashboard with luxurious gold theme - Built to sell!",
+  "language": "nodejs",
+  "run": "npm install && npm run dev",
+  "audio": false,
+  "category": "Web Development",
+  "features": [
+    "💰 3-tier monetization (Free, Pro $49, Enterprise $199)",
+    "💳 Stripe integration ready to accept payments",
+    "🎁 30% referral program for viral growth",
+    "📊 Usage tracking with intelligent upgrade prompts",
+    "🛍️ Integration marketplace with 8+ premium connectors",
+    "🎨 SFS gold & marble theme with circuit flow animations",
+    "⚡ Glass morphism design with smooth transitions"
+  ],
+  "tags": ["saas", "dashboard", "stripe", "monetization", "multi-tenant", "typescript", "react"],
+  "replitPackages": ["nodejs-20", "postgresql-15"],
+  "env": {
+    "PORT": "5000",
+    "NODE_ENV": "production"
+  },
+  "secrets": [
+    {
+      "key": "DATABASE_URL",
+      "description": "PostgreSQL connection string (auto-set by Replit DB)",
+      "required": false
+    },
+    {
+      "key": "STRIPE_PUBLIC_KEY",
+      "description": "Stripe publishable key (starts with pk_test_ or pk_live_)",
+      "required": false
+    },
+    {
+      "key": "STRIPE_SECRET_KEY",
+      "description": "Stripe secret key (starts with sk_test_ or sk_live_)",
+      "required": false
+    },
+    {
+      "key": "STRIPE_WEBHOOK_SECRET",
+      "description": "Stripe webhook signing secret (starts with whsec_)",
+      "required": false
+    }
+  ],
+  "setup": {
+    "commands": [
+      {
+        "name": "Install dependencies",
+        "command": "npm install"
+      },
+      {
+        "name": "Verify setup",
+        "command": "npm run verify"
+      }
+    ]
+  },
+  "quickstart": {
+    "title": "Get Started in 3 Steps",
+    "steps": [
+      {
+        "title": "1. Click Run",
+        "description": "The dashboard will start with demo data - no config needed!"
+      },
+      {
+        "title": "2. Add Stripe Keys (Optional)",
+        "description": "Go to Secrets tab and add STRIPE_PUBLIC_KEY and STRIPE_SECRET_KEY to enable payments"
+      },
+      {
+        "title": "3. Create Stripe Products",
+        "description": "Run: node scripts/setup-stripe-products.js to automatically create Pro & Enterprise plans"
+      }
+    ]
+  },
+  "documentation": {
+    "quick_start": "QUICK_START.md",
+    "deployment": "DEPLOYMENT_GUIDE.md",
+    "features": "ENHANCEMENTS.md",
+    "readme": "README.md"
+  }
+}
