@@ -1,6 +1,9 @@
 import { MetricCard } from "@/components/metric-card";
 import { ChartContainer } from "@/components/chart-container";
-import { Users, DollarSign, Activity, TrendingUp, Database, Clock } from "lucide-react";
+import { Users, DollarSign, Activity, TrendingUp, Database, Clock, Zap, CheckCircle2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import { useState, useEffect } from "react";
 import {
   LineChart,
   Line,
@@ -17,6 +20,26 @@ import {
 } from "recharts";
 
 export default function Dashboard() {
+  const [liveMetrics, setLiveMetrics] = useState({
+    users: 2847,
+    revenue: 52231,
+    apiRequests: 6200,
+    avgLatency: 142,
+  });
+
+  // Simulate real-time updates
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLiveMetrics((prev) => ({
+        users: prev.users + Math.floor(Math.random() * 3),
+        revenue: prev.revenue + Math.floor(Math.random() * 100),
+        apiRequests: prev.apiRequests + Math.floor(Math.random() * 50),
+        avgLatency: Math.max(100, Math.min(200, prev.avgLatency + (Math.random() - 0.5) * 10)),
+      }));
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
   const apiRequestsData = [
     { date: 'Nov 8', requests: 4200, errors: 45 },
     { date: 'Nov 9', requests: 3800, errors: 32 },
@@ -46,44 +69,74 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold" data-testid="text-page-title">Dashboard</h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Monitor your API performance and business metrics
-        </p>
+    <div className="space-y-6 pb-20">
+      <div className="flex items-start justify-between animate-fade-in">
+        <div>
+          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 bg-clip-text text-transparent" data-testid="text-page-title">
+            Dashboard
+          </h1>
+          <p className="text-muted-foreground">
+            Monitor your API performance and business metrics in real-time
+          </p>
+        </div>
+        <Badge className="bg-green-500/20 text-green-500 border-green-500/30 animate-pulse">
+          <Zap className="w-3 h-3 mr-1" />
+          Live
+        </Badge>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <MetricCard
-          title="Total Users"
-          value="2,847"
-          trend={12.5}
-          trendLabel="from last month"
-          icon={<Users className="h-4 w-4" />}
-        />
-        <MetricCard
-          title="Revenue"
-          value="$52,231"
-          trend={8.2}
-          trendLabel="from last month"
-          icon={<DollarSign className="h-4 w-4" />}
-        />
-        <MetricCard
-          title="API Requests"
-          value="6,200"
-          trend={15.3}
-          trendLabel="from yesterday"
-          icon={<Activity className="h-4 w-4" />}
-        />
-        <MetricCard
-          title="Avg Latency"
-          value="142ms"
-          trend={-5.1}
-          trendLabel="improvement"
-          icon={<Clock className="h-4 w-4" />}
-        />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 metric-card">
+        <div className="animate-slide-up" style={{ animationDelay: "0ms" }}>
+          <MetricCard
+            title="Total Users"
+            value={liveMetrics.users.toLocaleString()}
+            trend={12.5}
+            trendLabel="from last month"
+            icon={<Users className="h-4 w-4" />}
+          />
+        </div>
+        <div className="animate-slide-up" style={{ animationDelay: "100ms" }}>
+          <MetricCard
+            title="Revenue"
+            value={`$${liveMetrics.revenue.toLocaleString()}`}
+            trend={8.2}
+            trendLabel="from last month"
+            icon={<DollarSign className="h-4 w-4" />}
+          />
+        </div>
+        <div className="animate-slide-up" style={{ animationDelay: "200ms" }}>
+          <MetricCard
+            title="API Requests"
+            value={liveMetrics.apiRequests.toLocaleString()}
+            trend={15.3}
+            trendLabel="from yesterday"
+            icon={<Activity className="h-4 w-4" />}
+          />
+        </div>
+        <div className="animate-slide-up" style={{ animationDelay: "300ms" }}>
+          <MetricCard
+            title="Avg Latency"
+            value={`${Math.round(liveMetrics.avgLatency)}ms`}
+            trend={-5.1}
+            trendLabel="improvement"
+            icon={<Clock className="h-4 w-4" />}
+          />
+        </div>
       </div>
+
+      {/* System Status */}
+      <Card className="glass-card p-4 border-green-500/30 animate-slide-up" style={{ animationDelay: "400ms" }}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <CheckCircle2 className="w-5 h-5 text-green-500" />
+            <div>
+              <p className="font-semibold">All Systems Operational</p>
+              <p className="text-sm text-muted-foreground">99.99% uptime in the last 30 days</p>
+            </div>
+          </div>
+          <Badge className="bg-green-500/20 text-green-500 border-green-500/30">Healthy</Badge>
+        </div>
+      </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <ChartContainer
