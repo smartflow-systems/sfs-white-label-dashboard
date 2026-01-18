@@ -25,6 +25,8 @@ import NotFound from "@/pages/not-found";
 import { CircuitBackground } from "@/components/circuit-background";
 import { CommandPalette } from "@/components/command-palette";
 import { NotificationsCenter } from "@/components/notifications-center";
+import { OnboardingTour } from "@/components/onboarding-tour";
+import { KeyboardShortcuts } from "@/components/keyboard-shortcuts";
 
 function Router() {
   return (
@@ -67,6 +69,12 @@ function App() {
           {/* Command Palette (⌘K) */}
           <CommandPalette />
 
+          {/* Onboarding Tour */}
+          <OnboardingTour />
+
+          {/* Keyboard Shortcuts */}
+          <KeyboardShortcuts />
+
           <SidebarProvider style={style as React.CSSProperties}>
             <div className="flex h-screen w-full relative circuit-container">
               <AppSidebar tenantName={selectedTenant.name} />
@@ -74,14 +82,16 @@ function App() {
                 <header className="flex items-center justify-between gap-4 p-4 border-b border-border-gold h-16 shrink-0 glass-card sticky top-0 z-50">
                   <div className="flex items-center gap-4">
                     <SidebarTrigger data-testid="button-sidebar-toggle" className="hover-elevate-gold" />
-                    <TenantSelector
-                      tenants={mockTenants}
-                      selectedTenant={selectedTenant}
-                      onSelectTenant={setSelectedTenant}
-                    />
+                    <div className="tenant-selector">
+                      <TenantSelector
+                        tenants={mockTenants}
+                        selectedTenant={selectedTenant}
+                        onSelectTenant={setSelectedTenant}
+                      />
+                    </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="relative hidden md:block">
+                    <div className="relative hidden md:block command-palette-trigger">
                       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
                         placeholder="Search... (press / to focus)"
@@ -89,7 +99,9 @@ function App() {
                         data-testid="input-global-search"
                       />
                     </div>
-                    <NotificationsCenter />
+                    <div className="notifications-center">
+                      <NotificationsCenter />
+                    </div>
                     <ThemeToggle />
                     <Avatar className="h-8 w-8 hover-elevate-gold cursor-pointer transition-all" data-testid="avatar-user">
                       <AvatarImage src="" />
