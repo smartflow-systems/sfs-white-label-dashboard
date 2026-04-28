@@ -3,11 +3,13 @@ import { db } from '../storage';
 import { clients, type InsertClient } from '../../shared/schema';
 import { eq, and, desc } from 'drizzle-orm';
 import { requireTenant } from '../middleware/tenant';
+import { requireAuth } from '../middleware/sfs-auth';
 import { createTenantDb } from '../lib/tenant-db';
 
 const router = express.Router();
 
-// All client routes require tenant context
+// All client routes require JWT auth + tenant context
+router.use(requireAuth);
 router.use(requireTenant);
 
 /**
