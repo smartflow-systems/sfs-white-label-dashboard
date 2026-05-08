@@ -14,8 +14,13 @@ jobs:
     runs-on: ubuntu-latest
     if: hashFiles('package.json') != ''
     steps:
+<<<<<<< HEAD
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v6
+=======
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v4
+>>>>>>> origin/main
         with:
           node-version: '24'
       - run: npm audit --audit-level=moderate
@@ -26,8 +31,13 @@ jobs:
     runs-on: ubuntu-latest
     if: hashFiles('requirements.txt') != ''
     steps:
+<<<<<<< HEAD
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+=======
       - uses: actions/checkout@v6
       - uses: actions/setup-python@v5
+>>>>>>> origin/main
         with:
           python-version: '3.11'
       - run: pip install pip-audit

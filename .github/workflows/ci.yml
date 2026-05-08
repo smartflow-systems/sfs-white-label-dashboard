@@ -23,8 +23,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
+<<<<<<< HEAD
+      - name: Setup Node.js 18
+        uses: actions/setup-node@v6
+=======
       - name: Setup Node.js 24
         uses: actions/setup-node@v4
+>>>>>>> origin/main
         with:
           node-version: '24'
           cache: 'npm'
@@ -45,8 +50,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
+<<<<<<< HEAD
+      - name: Setup Node.js 18
+        uses: actions/setup-node@v6
+=======
       - name: Setup Node.js 24
         uses: actions/setup-node@v4
+>>>>>>> origin/main
         with:
           node-version: '24'
           cache: 'npm'
@@ -66,8 +76,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
+<<<<<<< HEAD
+      - name: Setup Node.js 18
+        uses: actions/setup-node@v6
+=======
       - name: Setup Node.js 24
         uses: actions/setup-node@v4
+>>>>>>> origin/main
         with:
           node-version: '24'
           cache: 'npm'
@@ -79,7 +94,7 @@ jobs:
         run: npm run build
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: build-artifacts
           path: dist/
