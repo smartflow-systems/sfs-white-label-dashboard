@@ -1,4 +1,4 @@
-import { LayoutDashboard, Activity, Plug, Settings, Building2 } from "lucide-react";
+import { LayoutDashboard, Activity, Plug, Settings, Building2, DollarSign, CreditCard, ShoppingBag, Gift } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -29,6 +29,26 @@ const menuItems = [
     title: "API Connections",
     url: "/connections",
     icon: Plug,
+  },
+  {
+    title: "Marketplace",
+    url: "/marketplace",
+    icon: ShoppingBag,
+  },
+  {
+    title: "Pricing",
+    url: "/pricing",
+    icon: DollarSign,
+  },
+  {
+    title: "Billing",
+    url: "/billing",
+    icon: CreditCard,
+  },
+  {
+    title: "Referrals",
+    url: "/referrals",
+    icon: Gift,
   },
   {
     title: "Settings",

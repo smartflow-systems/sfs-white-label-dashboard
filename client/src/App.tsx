@@ -17,6 +17,10 @@ import Dashboard from "@/pages/dashboard";
 import Analytics from "@/pages/analytics";
 import Connections from "@/pages/connections";
 import Settings from "@/pages/settings";
+import Pricing from "@/pages/pricing";
+import Billing from "@/pages/billing";
+import Marketplace from "@/pages/marketplace";
+import Referrals from "@/pages/referrals";
 import NotFound from "@/pages/not-found";
 import { CircuitBackground } from "@/components/circuit-background";
 import { CommandPalette } from "@/components/command-palette";
@@ -28,6 +32,10 @@ function Router() {
       <Route path="/" component={Dashboard} />
       <Route path="/analytics" component={Analytics} />
       <Route path="/connections" component={Connections} />
+      <Route path="/marketplace" component={Marketplace} />
+      <Route path="/pricing" component={Pricing} />
+      <Route path="/billing" component={Billing} />
+      <Route path="/referrals" component={Referrals} />
       <Route path="/settings" component={Settings} />
       <Route component={NotFound} />
     </Switch>

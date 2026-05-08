@@ -3,6 +3,7 @@ import { db } from '../storage';
 import { tenants, subscriptionPlans, activityLogs } from '../../shared/schema';
 import { eq } from 'drizzle-orm';
 import { requireTenant } from '../middleware/tenant';
+import { requireAuth } from '../middleware/sfs-auth';
 import { createTenantDb } from '../lib/tenant-db';
 
 const router = express.Router();
@@ -47,7 +48,7 @@ router.get('/plans', async (req, res) => {
  * GET /api/billing/current
  * Get current subscription details
  */
-router.get('/current', requireTenant, async (req, res) => {
+router.get('/current', requireAuth, requireTenant, async (req, res) => {
   try {
     const [tenant] = await db
       .select()
@@ -89,7 +90,7 @@ router.get('/current', requireTenant, async (req, res) => {
  * POST /api/billing/create-checkout-session
  * Create Stripe checkout session for upgrading
  */
-router.post('/create-checkout-session', requireTenant, async (req, res) => {
+router.post('/create-checkout-session', requireAuth, requireTenant, async (req, res) => {
   try {
     const { planSlug, billingCycle } = req.body;
 
@@ -182,7 +183,7 @@ router.post('/create-checkout-session', requireTenant, async (req, res) => {
  * POST /api/billing/create-portal-session
  * Create Stripe customer portal session
  */
-router.post('/create-portal-session', requireTenant, async (req, res) => {
+router.post('/create-portal-session', requireAuth, requireTenant, async (req, res) => {
   try {
     if (!stripe) {
       return res.status(503).json({
@@ -219,7 +220,7 @@ router.post('/create-portal-session', requireTenant, async (req, res) => {
  * GET /api/billing/usage
  * Get current usage statistics
  */
-router.get('/usage', requireTenant, async (req, res) => {
+router.get('/usage', requireAuth, requireTenant, async (req, res) => {
   try {
     const tenantDb = createTenantDb(req.tenantId!);
 
@@ -262,7 +263,7 @@ router.get('/usage', requireTenant, async (req, res) => {
  * GET /api/billing/invoices
  * Get invoice history
  */
-router.get('/invoices', requireTenant, async (req, res) => {
+router.get('/invoices', requireAuth, requireTenant, async (req, res) => {
   try {
     if (!stripe) {
       return res.json([]);
@@ -454,7 +455,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
  * POST /api/billing/cancel-subscription
  * Cancel current subscription
  */
-router.post('/cancel-subscription', requireTenant, async (req, res) => {
+router.post('/cancel-subscription', requireAuth, requireTenant, async (req, res) => {
   try {
     if (!stripe) {
       return res.status(503).json({ error: 'Stripe not configured' });
