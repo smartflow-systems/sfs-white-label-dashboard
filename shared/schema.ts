@@ -45,6 +45,9 @@ export const tenants = pgTable("tenants", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
   lastLoginAt: timestamp("last_login_at"),
 
+  // SFS SSO link — the SFS org that owns this tenant account
+  orgId: text("org_id"),
+
   // Status
   isActive: boolean("is_active").default(true),
   isSuspended: boolean("is_suspended").default(false),

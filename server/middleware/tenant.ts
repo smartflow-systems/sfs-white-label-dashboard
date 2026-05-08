@@ -28,10 +28,11 @@ declare global {
  * Tenant Resolution Middleware
  *
  * Determines which tenant the request belongs to based on:
- * 1. Custom domain (e.g., agency.com)
+ * 1. Header (X-Tenant-ID) for API requests
  * 2. Subdomain (e.g., agency.sfsplatform.com)
- * 3. Header (X-Tenant-ID) for API requests
- * 4. Query parameter (?tenant=xxx) for development
+ * 3. Custom domain (e.g., agency.com)
+ * 4. SFS SSO orgId from JWT (maps an SFS org to its tenant account)
+ * 5. Query parameter (?tenant=xxx) for development
  */
 export async function resolveTenant(
   req: Request,
@@ -87,7 +88,21 @@ export async function resolveTenant(
       }
     }
 
-    // Method 4: Development mode - check query parameter
+    // Method 4: SFS SSO orgId — JWT-authenticated org maps to its tenant account
+    if (!tenantId && req.user?.orgId) {
+      const [foundTenant] = await db
+        .select()
+        .from(tenants)
+        .where(eq((tenants as any).orgId, req.user.orgId))
+        .limit(1);
+
+      if (foundTenant) {
+        tenant = foundTenant;
+        tenantId = foundTenant.id;
+      }
+    }
+
+    // Method 5: Development mode - check query parameter
     if (!tenantId && process.env.NODE_ENV === 'development') {
       const queryTenant = req.query.tenant as string;
       if (queryTenant) {
