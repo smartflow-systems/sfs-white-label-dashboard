@@ -11,4 +11,17 @@ export default defineConfig({
   dbCredentials: {
     url: process.env.DATABASE_URL,
   },
+  tablesFilter: [
+    "tenants",
+    "users",
+    "clients",
+    "api_connections",
+    "dashboard_widgets",
+    "subscription_plans",
+    "referrals",
+    "referral_commissions",
+    "usage_records",
+    "invoices",
+    "activity_logs",
+  ],
 });

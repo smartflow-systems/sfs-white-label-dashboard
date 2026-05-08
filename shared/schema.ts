@@ -46,7 +46,7 @@ export const tenants = pgTable("tenants", {
   lastLoginAt: timestamp("last_login_at"),
 
   // SFS SSO link — the SFS org that owns this tenant account
-  orgId: text("org_id"),
+  orgId: text("org_id").default("default"),
 
   // Status
   isActive: boolean("is_active").default(true),
