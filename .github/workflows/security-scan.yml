@@ -14,10 +14,10 @@ jobs:
     runs-on: ubuntu-latest
     if: hashFiles('package.json') != ''
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
       - run: npm audit --audit-level=moderate
         continue-on-error: true
 
@@ -26,8 +26,13 @@ jobs:
     runs-on: ubuntu-latest
     if: hashFiles('requirements.txt') != ''
     steps:
+<<<<<<< HEAD
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v6
+=======
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v5
+>>>>>>> origin/main
         with:
           python-version: '3.11'
       - run: pip install pip-audit
@@ -38,7 +43,7 @@ jobs:
     name: Secret Scanning
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: TruffleHog Secret Scan
