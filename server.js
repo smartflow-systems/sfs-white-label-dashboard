@@ -4,6 +4,7 @@ import cors from "cors";
 import rateLimit from "express-rate-limit";
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
 import { join } from "path";
+import rateLimit from "express-rate-limit";
 
 const app = express();
 
@@ -52,6 +53,14 @@ const leadsFile = join(dataDir, "leads.json");
 if (!existsSync(leadsFile)) {
   writeFileSync(leadsFile, JSON.stringify({ leads: [] }, null, 2));
 }
+
+// Rate limiter for Stripe checkout to prevent abuse / DoS
+const stripeCheckoutLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 20,             // limit each IP to 20 requests per windowMs
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 // Admin API key middleware
 function requireAdminKey(req, res, next) {
@@ -196,8 +205,8 @@ app.get("/api/leads", requireAdminKey, (_req, res) => {
   }
 });
 
-// API: Stripe Checkout (placeholder)
-app.post("/api/stripe/checkout", leadsLimiter, async (req, res) => {
+// API: Stripe Checkout (placeholder - requires Stripe configuration)
+app.post("/api/stripe/checkout", stripeCheckoutLimiter, async (req, res) => {
   try {
     const { planId } = req.body;
 
