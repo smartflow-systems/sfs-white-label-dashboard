@@ -54,7 +54,6 @@ if (!existsSync(leadsFile)) {
   writeFileSync(leadsFile, JSON.stringify({ leads: [] }, null, 2));
 }
 
-<<<<<<< HEAD
 // Rate limiter for Stripe checkout to prevent abuse / DoS
 const stripeCheckoutLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
@@ -62,7 +61,7 @@ const stripeCheckoutLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
-=======
+
 // Admin API key middleware
 function requireAdminKey(req, res, next) {
   const adminKey = process.env.ADMIN_API_KEY;
@@ -75,7 +74,6 @@ function requireAdminKey(req, res, next) {
   }
   next();
 }
->>>>>>> origin/main
 
 // Helper: Read leads
 function readLeads() {
