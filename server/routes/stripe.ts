@@ -7,6 +7,7 @@ import {
   calculateReferralCommission,
   getTierFromPriceId,
 } from '../lib/stripe';
+import { requireAuth } from '../middleware/sfs-auth';
 
 const router = Router();
 
@@ -14,7 +15,7 @@ const router = Router();
  * POST /api/stripe/create-checkout-session
  * Create a Stripe Checkout session for subscription
  */
-router.post('/create-checkout-session', async (req: Request, res: Response) => {
+router.post('/create-checkout-session', requireAuth, async (req: Request, res: Response) => {
   try {
     const { priceId, email, userId, referralCode } = req.body;
 
@@ -42,7 +43,7 @@ router.post('/create-checkout-session', async (req: Request, res: Response) => {
  * POST /api/stripe/create-portal-session
  * Create a Stripe Customer Portal session
  */
-router.post('/create-portal-session', async (req: Request, res: Response) => {
+router.post('/create-portal-session', requireAuth, async (req: Request, res: Response) => {
   try {
     const { customerId } = req.body;
 
@@ -63,7 +64,7 @@ router.post('/create-portal-session', async (req: Request, res: Response) => {
  * GET /api/stripe/invoices/:customerId
  * Get invoices for a customer
  */
-router.get('/invoices/:customerId', async (req: Request, res: Response) => {
+router.get('/invoices/:customerId', requireAuth, async (req: Request, res: Response) => {
   try {
     const { customerId } = req.params;
     const limit = parseInt(req.query.limit as string) || 10;
