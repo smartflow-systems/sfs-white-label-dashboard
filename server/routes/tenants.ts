@@ -3,6 +3,7 @@ import { db } from '../storage';
 import { tenants, users, subscriptionPlans, type InsertTenant } from '../../shared/schema';
 import { eq } from 'drizzle-orm';
 import { resolveTenant, requireTenant } from '../middleware/tenant';
+import { requireAuth } from '../middleware/sfs-auth';
 import { createTenantDb } from '../lib/tenant-db';
 
 const router = express.Router();
@@ -126,13 +127,13 @@ router.get('/check-subdomain/:subdomain', async (req, res) => {
   }
 });
 
-// ==================== PROTECTED ROUTES (Require Tenant) ====================
+// ==================== PROTECTED ROUTES (Require JWT + Tenant) ====================
 
 /**
  * GET /api/tenants/current
  * Get current tenant information
  */
-router.get('/current', requireTenant, async (req, res) => {
+router.get('/current', requireAuth, requireTenant, async (req, res) => {
   try {
     const [tenant] = await db
       .select()
@@ -157,7 +158,7 @@ router.get('/current', requireTenant, async (req, res) => {
  * PATCH /api/tenants/current
  * Update current tenant settings
  */
-router.patch('/current', requireTenant, async (req, res) => {
+router.patch('/current', requireAuth, requireTenant, async (req, res) => {
   try {
     const {
       name,
@@ -210,7 +211,7 @@ router.patch('/current', requireTenant, async (req, res) => {
  * GET /api/tenants/stats
  * Get usage statistics for current tenant
  */
-router.get('/stats', requireTenant, async (req, res) => {
+router.get('/stats', requireAuth, requireTenant, async (req, res) => {
   try {
     const tenantDb = createTenantDb(req.tenantId!);
 
@@ -274,7 +275,7 @@ router.get('/subscription-plans', async (req, res) => {
  * POST /api/tenants/upgrade
  * Initiate subscription upgrade
  */
-router.post('/upgrade', requireTenant, async (req, res) => {
+router.post('/upgrade', requireAuth, requireTenant, async (req, res) => {
   try {
     const { planSlug, billingCycle } = req.body; // billingCycle: 'monthly' | 'yearly'
 
